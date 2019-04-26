@@ -23,6 +23,13 @@ router.delete('/:postId', async(req, res) => {
 	res.status(200).json({
 		message: "Удалено"
 	})
+}) 
+//передать айди  поста
+router.put('/:postId', async(req, res) => {
+	await Post.updateOne({_id: req.params.postId}, {title: "Important!"}, {new: true})
+	res.status(200).json({
+		message: "Изменено"
+	})
 })
 
 

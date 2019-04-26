@@ -11,6 +11,10 @@ const card = post =>
                    <button class="btn btn-small red js-remove" data-id="${post._id}">
                        <i class="material-icons">delete</i>
                    </button>
+                   
+                   <button class="btn btn-small red js-update" data-id="${post._id}">
+                       <i class="material-icons">update</i>
+                   </button>
                </div>
            </div>
     `
@@ -46,6 +50,13 @@ class PostApi
             method: 'delete'
         }).then(res => res.json())
     }
+
+    static update(id)
+     {
+        return fetch(`${BASE_URL}/${id}`, {
+            method: 'put'
+        }).then(res => res.json())
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () =>
@@ -59,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () =>
     modal = M.Modal.init(document.querySelector('.modal'))
     document.querySelector('#createPost').addEventListener('click', onCreatePost)
     document.querySelector('#posts').addEventListener('click', onDeletePost)
+    document.querySelector('#posts').addEventListener('click', onUpdatePost)
 })
 
 function renderPosts(_posts = []) 
@@ -107,6 +119,30 @@ function onDeletePost(event)
              {
                 const postIndex = posts.findIndex(post => post._id === id)
                 posts.splice(postIndex, 1)
+                renderPosts(posts)
+            })
+        }
+    }
+}
+
+function onUpdatePost(event)
+ {
+    if(event.target.classList.contains('js-update')) {
+        const decision = confirm('Вы уверены, что хотите обновить пост?')
+
+        if(decision) 
+        {
+            const id = event.target.getAttribute('data-id')
+            PostApi.update(id).then(() =>
+             {
+                const postIndex = posts.findIndex(post => post._id === id)
+                posts[postIndex] = {
+                    _id: posts[postIndex]._id,
+                    title: "Important!",
+                    text: posts[postIndex].text,
+                    date: posts[postIndex].date
+                }
+                //posts.splice(postIndex, 1)
                 renderPosts(posts)
             })
         }
